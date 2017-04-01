@@ -25,7 +25,6 @@ def delete_song(song_path):
 
 def create_mail(title, to_address):
     send_user = os.environ.get('SEND_USER')
-    print(title + '.mp3')
     msg = MIMEMultipart()
     msg['Subject'] = 'songemail sends you: {}'.format(title)
     msg['From'] = send_user
@@ -46,7 +45,7 @@ def create_mail(title, to_address):
     return msg
 
 
-def send_mail(msg, to_address):
+def send_mail(title, msg, to_address):
     send_user = os.environ.get('SEND_USER')
     send_pwd = os.environ.get('SEND_PWD')
 
@@ -57,10 +56,10 @@ def send_mail(msg, to_address):
     smtpserver.login(send_user, send_pwd)
     print("logged in to SMTP Server")
     smtpserver.send_message(msg, send_user, to_address)
-    print('done!')
+    print("song sent. Logging out.")
     smtpserver.close()
 
 
-def email_helper(title, to_address): # title and to_address is passed from downloadWorker in youdown.py
+def email_helper(title, to_address):  # title and to_address is passed from downloadWorker in youdown.py
     msg = create_mail(title, to_address)
-    send_mail(msg, to_address)
+    send_mail(title, msg, to_address)
