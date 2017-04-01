@@ -1,0 +1,8 @@
+activate
+__pycache__/*
+songemail/__pycache__/*
+*.swp
+*.swo
+*.env
+*.pyc
+*.mp3
