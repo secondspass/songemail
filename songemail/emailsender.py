@@ -1,3 +1,4 @@
+import difflib
 from email.mime.audio import MIMEAudio
 from email.mime.multipart import MIMEMultipart
 import smtplib
@@ -5,15 +6,20 @@ import os
 import re
 
 
-def get_song_path():
+def get_song_path(title):
     """Because youtube-dl does not replaces the '|' character with the '_'
     character, we need to go directly to the directory and retrieve the
     file name and path from there. This also means we will have to delete the
     file after the file has been sent. That's what delete_song() is for.
+
+    Also, if there happen to be multiple files in that directory then the title
+    from youtube-dl is compared with the list of files in the directory to
+    find the file that matched and pass its path.
     """
 
     song_name_list = os.listdir('songs')
-    song_path = os.path.abspath(os.path.join('songs', song_name_list[0]))
+    song_name = difflib.get_close_matches(title, song_name_list, n=1)
+    song_path = os.path.abspath(os.path.join('songs', song_name[0]))
     return song_path
 
 
@@ -31,7 +37,7 @@ def create_mail(title, to_address):
     msg['To'] = to_address
     msg.preamble = 'A song from songemail'
 
-    song_path = get_song_path()
+    song_path = get_song_path(title)
 
     with open(song_path, 'rb') as fp:
         song = MIMEAudio(fp.read(), 'mp3')
